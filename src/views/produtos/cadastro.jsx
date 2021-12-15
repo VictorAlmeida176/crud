@@ -6,7 +6,9 @@ const estadoInicial = {
     sku:"",
     descricao:"",
     preco:0,
-    fornecedor:""
+    fornecedor:"",
+    sucesso: false,
+    errors:[]
 }
 
 class CadastroProduto extends React.Component{
@@ -32,13 +34,16 @@ class CadastroProduto extends React.Component{
         preco:this.state.preco,
         fornecedor:this.state.fornecedor
         }
-
-        this.service.salvar(produto)
-        this.limpaCampos()
-
-        console.log("Salvo com sucesso")
+        try{
+            this.service.salvar(produto)
+            this.limpaCampos()
+            this.setState({sucesso:true})
+        }catch(erro){
+            const errors = erro.errors
+            this.setState({errors:errors})
+        }    
     }
-
+        
     limpaCampos = ()=>{
         this.setState(estadoInicial);
         }
@@ -48,6 +53,30 @@ class CadastroProduto extends React.Component{
             <div className="card">
                 <div className="card-header"> Cadastro de produtos </div>
                     <div className="card-body">
+
+                        {this.state.sucesso&&
+                            
+                                <div class="alert alert-dismissible alert-success">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                <strong>Parabéns!</strong> Cadastro realizado com sucesso!
+                            </div>
+                            
+                        }
+
+                        {this.state.errors.length>0 &&
+                            this.state.errors.map(msg=>{
+                                return(
+                                    <div class="alert alert-dismissible alert-danger">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                <strong>Erro</strong> {msg}
+                            </div>
+                                )
+                            })
+                            
+                            
+                        }
+
+                   
 
                         {/* Start row */}
                             <div className="row">
